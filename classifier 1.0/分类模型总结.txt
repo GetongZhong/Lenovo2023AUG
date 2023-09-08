@@ -1,0 +1,30 @@
+项目类型：分类模型
+选用算法：RandomForest，kNN
+准备工作：
+1. 处理NA值： 首先去除了几乎都是NA值的列，包括 ：['DIMM Capacity', 'DIMM Error Status', 'Mother Board Location', 'Others Location', 'PCI Location', 'Memory Dimmxdisable Control',
+          'CPU Event','DIMM Health Event', 'psu Location', 'CPU Location', 'PSU Status', 'Dimm Location', 'UEFI Version Changing',
+          'Disk Location', 'CPU Status', 'Hidden Log', 'DIMM Status', 'Fan Location', 'Disk Health Status', 'RAID Log  Message', 
+          'RAID Log  severity', 'RAID Log ID', 'RAID Log Timestamp', 'LXPM  Version Changing', 'Abnormal LED Name', 'XCC Version Changing',
+          'Restart Count', 'Active Event and Message', 'Restart Time and Causes','LXPM Version', 'DIMM Ecc Bits', 'System Power', 'Post Completed',
+          'hw_changing', 'Disk Temperature', 'Latest 30 Days Error Lists', 'Latest 30 Days Warning Lists', 'Latest 30 Days Info Lists','Secure Boot Mode']
+	       其次去除了一些在之后modeling时候不好处理的列，包括：['Work Order Count', 'Onsite Work Order  Count', 'Onsite appear befor than others', 'file_type_id', 
+              'matched_serial_num_from_file_data', 'Status', 'log_id_count_from_file_data', 'log_id_list_from_file_data',
+              'Case Num', 'Country', 'Log ID from Case Info', 'Report ID', 'Serial Number', 'Created On', 'Closed On', 'DIMM Manuf_date', 
+              'Serial Num', 'Operating System', "Action Plan", "Problem Description", "UEFI Version", "XCC Version", 'Replace Part Name',"PSU on Duration","Disk partNumber"]
+
+2. 处理一些特定的数据格式：原有数据中的一些值是类似于以下的格式：[a|a|a|a],[a-b,c-d],[a AND b], 我对这些值进行了一些split('|'), split('-'), split('AND')
+最后的数据size是(17160, 28)
+  
+3. 用CountVectorizer进行对于一些非数值的列进行encode，包括：['Selected Warranty Service Level', 'Problem Category', 'Machine Type', 'Abnormal LED Count', 'FPGA Version', 'Processor Cstatus','Processor Intel Virtualization Technology', 'Bootmode System Bootmode', 'Choose Operating Mode', 'cpu_type', 'Language'，'CPU Type', 'DIMM Manufacture', 'DIMM Part Number', 'Disk Interface Type', 'Disk fwVersion', 'Disk fruNumber', 
+'Disk Remain Life', 'PSU manufactureID', 'PSU Power Cycles', 'PSU Power Errors', 'PSU Rated Power', 'Disk Manufacture', 'Disk Capacity','CPU Manufacture'] 
+
+4.用MultiLabelBinarizer对于需要multilabel处理的列进行encode，包括：['CPU Type', 'DIMM Manufacture', 'DIMM Part Number', 'Disk Interface Type', 'Disk fwVersion', 'Disk fruNumber', 
+'Disk Remain Life', 'PSU manufactureID', 'PSU Power Cycles', 'PSU Power Errors', 'PSU Rated Power', 'Disk Manufacture', 'Disk Capacity','CPU Manufacture']
+
+5. Split Train, test set: test_size=0.3
+
+训练模型：
+Accuracy: 0.683954933954934
+Feature Selection: Set a threshold for feature importance, threshold = 0.03
+KNN:
+尝试GridSearch但是：MemoryError: Unable to allocate 798. MiB for an array with shape (12012, 8705) and data type int64
